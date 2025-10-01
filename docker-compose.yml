@@ -1,0 +1,19 @@
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+      target: builder
+    ports:
+      - "${PORT:-3000}:${PORT:-3000}"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=${NODE_ENV:-development}
+    volumes:
+      - ./src:/app/src
+      - ./dist:/app/dist
+      - ./package.json:/app/package.json
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./.env:/app/.env
+    command: npm run dev
