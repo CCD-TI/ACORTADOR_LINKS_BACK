@@ -16,7 +16,22 @@ export default class App {
     this.server.use(express.json());
     //this.server.use(express.urlencoded({ extended: true }));
     // Aquí puedes agregar CORS, morgan, helmet, etc.
-    this.server.use(cors());
+    this.server.use(cors({
+        origin: [
+            "http://localhost:3000",
+            "http://localhost:3100",
+            "https://ccd-frontendv-2-zi6f.vercel.app",
+            "https://front.ccdcapacitacion.edu.pe",
+            "https://www.ccdcapacitacion.edu.pe",
+            "https://ccdcapacitacion.edu.pe",
+            "https://links.ccdcapacitacion.edu.pe",
+            "https://links.digitalcollege.edu.pe",
+            "https://links.erpccd.com"
+        ],
+        credentials: true,
+        methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+        allowedHeaders: ["Content-Type", "Authorization"],
+    }));
     // this.server.use(morgan("dev"));
   }
 
