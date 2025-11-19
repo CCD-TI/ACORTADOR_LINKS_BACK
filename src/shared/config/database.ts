@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize-typescript";
 import { models } from "../models/models";
-
+import pg from 'pg';
 class Database {
     private connection: Sequelize | null;
 
@@ -11,26 +11,27 @@ class Database {
 
     init() {
         try {
-            const DB_HOST = process.env.DB_HOST || 'localhost';
-            const DB_PORT = process.env.DB_PORT || '5432';
-            const DB_NAME = process.env.DB_NAME || 'acortador';
-            const DB_USER = process.env.DB_USER || 'root';
-            const DB_PASSWORD = process.env.DB_PASSWORD || '';
+            const databaseUrl = process.env.POSTGRES_URL;
+            if (!databaseUrl) {
+                throw new Error("DATABASE_URL no está definido en el entorno.");
+            }
             console.log("📦 Configurando conexión a la base de datos...")
-            console.log(DB_HOST, DB_PORT, DB_NAME, DB_USER);
-            this.connection = new Sequelize({
+            this.connection = new Sequelize(databaseUrl, {
                 dialect: "postgres",
-                host: DB_HOST,
-                port: parseInt(DB_PORT),
-                database: DB_NAME,
-                username: DB_USER,
-                password: DB_PASSWORD,
+                dialectModule: pg,
                 logging: console.log,
                 retry: { max: 3 },
                 models: models,
+                /*
+                dialectOptions: {
+                    ssl: {
+                        require: true,
+                        rejectUnauthorized: false, // para evitar errores con certificados autofirmados
+                    },
+                },*/
             });
             // No additional code needed here; addModels is correctly called after Sequelize initialization.
-            console.log("🔗 Conectando a PostgreSQL en:", DB_HOST);
+            console.log("🔗 Conectando a PostgreSQL en:", databaseUrl);
         } catch (e) {
             console.error("❌ Error al configurar la conexión con la base de datos", e);
         }
